@@ -1,10 +1,11 @@
 
-#!/usr/bin/python
+#!/usr/bin/python3
 import json
 import requests
 import sqlite3
 from bloxplorer import bitcoin_explorer
 import sys
+import time
 
 conn = sqlite3.connect('bitcoin.db')
 c = conn.cursor()
@@ -50,4 +51,5 @@ for x in range(startBlock,endBlock):
         json.dumps(block['extras']),
         0,0,"non","nan",json.dumps(txs.data)])
         conn.commit()
+        time.sleep(5)
 
