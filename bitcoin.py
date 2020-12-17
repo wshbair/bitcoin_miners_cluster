@@ -12,6 +12,7 @@ c = conn.cursor()
 api_url_base = 'https://chain.api.btc.com/v3/block/'
 
 latest_height= bitcoin_explorer.blocks.get_last_height().data
+print(latest_height)
 
 startBlock= int(sys.argv[1])
 endBlock = int(sys.argv[2])
@@ -21,8 +22,8 @@ for x in range(startBlock,endBlock):
     response = requests.get(api_url)
     if response.status_code == 200:
         block = json.loads(response.content.decode('utf-8'))['data']
-        print(block['height'])
-        c.execute("insert into blocks values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [
+        txs = bitcoin_explorer.blocks.get_txids(block['hash'])   
+        c.execute("insert into blocks values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [
         block['height'],
         block['version'],
         block['mrkl_root'],
@@ -47,6 +48,6 @@ for x in range(startBlock,endBlock):
         block['sigops'],
         block['weight'],
         json.dumps(block['extras']),
-        0,0,"",""])
+        0,0,"non","nan",json.dumps(txs.data)])
         conn.commit()
 
