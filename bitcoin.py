@@ -9,18 +9,21 @@ import time
 
 conn = sqlite3.connect('bitcoin.db')
 c = conn.cursor()
+def GetLastBlock():
+    lastrecord= c.execute('SELECT * FROM blocks ORDER BY height DESC LIMIT 1;')
+    return (c.fetchone()[0])
 
-api_url_base = 'https://chain.api.btc.com/v3/block/'
-
+api_url_base = 'http://chain.api.btc.com/v3/block/'
 latest_height= bitcoin_explorer.blocks.get_last_height().data
-print(latest_height)
+startBlock= GetLastBlock()+1
+endBlock = int(latest_height)
 
-startBlock= int(sys.argv[1])
-endBlock = int(sys.argv[2])
 
 for x in range(startBlock,endBlock):
+    print ("Block counter: ", x )
     api_url=api_url_base+str(x)
     response = requests.get(api_url)
+    print((response.content.decode('utf-8')))
     if response.status_code == 200:
         block = json.loads(response.content.decode('utf-8'))['data']
         txs = bitcoin_explorer.blocks.get_txids(block['hash'])   
@@ -52,4 +55,5 @@ for x in range(startBlock,endBlock):
         0,0,"non","nan",json.dumps(txs.data)])
         conn.commit()
         time.sleep(5)
-
+    else:
+        time.sleep(5)
