@@ -12,5 +12,5 @@ pip3 install bloxplorer
 ## Usage
 
 ```
-python3 bitcoin.py start_block_number end_block_number
+python3 bitcoin.py
 ```
